@@ -1,12 +1,71 @@
 {
-  "name": "n2vi",
+  "name": "n2cur",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "Thư viện đọc số tiền thành chữ tiếng Việt (VND, USD, EUR, GBP, JPY, SGD...) hỗ trợ Master Data cho Frontend.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "unpkg": "./dist/n2cur.global.js",
+  "jsdelivr": "./dist/n2cur.global.js",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "prebuild": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "dev:playground": "vite playground",
+    "build:playground": "vite build playground",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dongtrieuit/n2cur.git"
+  },
+  "keywords": [
+    "n2cur",
+    "vietnamese",
+    "number-to-words",
+    "money",
+    "currency",
+    "doc-so-tien",
+    "doc-so-thanh-chu",
+    "vnd",
+    "react",
+    "angular",
+    "vue"
+  ],
+  "author": "dongtrieuit",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dongtrieuit/n2cur/issues"
+  },
+  "homepage": "https://github.com/dongtrieuit/n2cur#readme",
+  "engines": {
+    "node": ">=14"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1",
+    "typescript": "~5.9",
+    "vite": "^8.3.3",
+    "vitest": "^4.1.11"
+  }
 }

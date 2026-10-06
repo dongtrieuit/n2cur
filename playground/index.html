@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>n2cur - Đọc số tiền thành chữ tiếng Việt cho React, Angular, Vue, Node.js & CDN</title>
+    <meta
+      name="description"
+      content="n2cur là thư viện JavaScript/TypeScript đọc số tiền thành chữ tiếng Việt chính xác (VND, USD, EUR, GBP, JPY, SGD) cho React, Angular, Vue, Node.js và CDN. Tác giả: dongtrieuit."
+    />
+    <meta name="keywords" content="n2cur, đọc số tiền thành chữ, doc so tien thanh chu, react doc so tien, angular doc so tien, vue doc so tien, vietnamese number to words, dongtrieuit" />
+    <meta name="author" content="dongtrieuit" />
+    <link rel="canonical" href="https://github.com/dongtrieuit/n2cur" />
+
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#4f46e5" />
+    <meta name="msapplication-TileColor" content="#4f46e5" />
+
+    <!-- Open Graph / Social Media SEO -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="n2cur" />
+    <meta property="og:locale" content="vi_VN" />
+    <meta property="og:title" content="n2cur - Đọc số tiền thành chữ tiếng Việt cho React, Angular, Vue, Node.js & CDN" />
+    <meta property="og:description" content="Thư viện JavaScript/TypeScript đọc số tiền thành chữ tiếng Việt chính xác (VND, USD, EUR, GBP). Tác giả: dongtrieuit." />
+    <meta property="og:url" content="https://github.com/dongtrieuit/n2cur" />
+    <meta property="og:image" content="https://raw.githubusercontent.com/dongtrieuit/n2cur/main/assets/og-image.png" />
+    <meta property="og:image:secure_url" content="https://raw.githubusercontent.com/dongtrieuit/n2cur/main/assets/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="n2cur - Thư viện đọc số tiền thành chữ tiếng Việt cho React, Angular, Vue" />
+
+    <!-- Twitter Card SEO -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@dongtrieuit" />
+    <meta name="twitter:creator" content="@dongtrieuit" />
+    <meta name="twitter:title" content="n2cur - Đọc số tiền thành chữ tiếng Việt cho React, Angular, Vue" />
+    <meta name="twitter:description" content="Thư viện JavaScript/TypeScript đọc số tiền thành chữ tiếng Việt chính xác (VND, USD, EUR). Tác giả: dongtrieuit." />
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/dongtrieuit/n2cur/main/assets/og-image.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+
+    <!-- JSON-LD Structured Data for AI Crawlers -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "n2cur",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web Browser, Node.js",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "description": "Thư viện JavaScript/TypeScript đọc số tiền thành chữ tiếng Việt cho React, Angular, Vue, Vanilla JS và CDN.",
+        "image": "https://raw.githubusercontent.com/dongtrieuit/n2cur/main/assets/og-image.png",
+        "author": {
+          "@type": "Person",
+          "name": "dongtrieuit",
+          "url": "https://github.com/dongtrieuit"
+        },
+        "codeRepository": "https://github.com/dongtrieuit/n2cur.git",
+        "programmingLanguage": "TypeScript, JavaScript"
+      }
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a href="https://github.com/dongtrieuit/n2cur" class="brand" title="n2cur GitHub Repository">
+        <span class="brand-logo">₫</span>
+        <span class="brand-name">n2cur</span>
+        <span class="brand-tag">v1.0.0</span>
+      </a>
+      <div class="top-actions">
+        <a href="https://github.com/dongtrieuit/n2cur.git" target="_blank" rel="noopener" class="repo-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span>GitHub</span>
+        </a>
+        <button id="npm-copy-btn" type="button" class="install-badge-btn" title="Sao chép lệnh cài đặt">
+          <code>npm i n2cur</code>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <div class="hero-badges">
+          <span class="badge primary">TypeScript</span>
+          <span class="badge">MIT License</span>
+        </div>
+        <h1>Đọc số tiền <span class="grad">thành chữ</span> tiếng Việt</h1>
+        <p class="subtitle">
+          Thư viện JavaScript đọc số tiền thành chữ tiếng Việt (VND, USD, EUR) cho React, Angular, Vue.
+        </p>
+        <blockquote class="dev-intro-quote">
+          Đang làm tính năng hóa đơn/thanh toán mà đau đầu vụ đọc số tiền thành chữ? Thôi đừng tự code lại nữa mấy bác! Bộ quy tắc trong n2cur đã được tối ưu qua vô số vòng nghiệm thu khó tính từ BU ngân hàng. Cài 1 dòng <code>npm i n2cur</code> là xong ngay!
+        </blockquote>
+      </section>
+
+      <!-- SECTION 1: INTERACTIVE QUICK TESTER -->
+      <section class="card tester-card" aria-labelledby="tester-title">
+        <div class="card-head">
+          <h2 id="tester-title">Dùng thử</h2>
+        </div>
+        <div class="input-row">
+          <label class="field amount-field">
+            <span class="field-label">Số tiền</span>
+            <input id="amount-input" type="text" inputmode="decimal" autocomplete="off" value="1005001" />
+          </label>
+          <label class="field">
+            <span class="field-label">Tiền tệ</span>
+            <select id="currency-select"></select>
+          </label>
+          <div class="field">
+            <span class="field-label">Dấu thập phân</span>
+            <div class="segmented" role="radiogroup" aria-label="Dấu thập phân">
+              <button id="sep-dot" type="button" class="seg active" data-sep=".">1,234.56</button>
+              <button id="sep-comma" type="button" class="seg" data-sep=",">1.234,56</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="result-box" class="result" aria-live="polite">
+          <div class="result-head">
+            <span id="result-label" class="result-label">Kết quả</span>
+            <button id="copy-btn" type="button" class="ghost-btn small" title="Sao chép">
+              <span id="copy-text">Sao chép</span>
+            </button>
+          </div>
+          <p id="result-text" class="result-text"></p>
+          <code id="result-code" class="result-code"></code>
+        </div>
+      </section>
+
+      <!-- SECTION 2: DOCUMENTATION & FRAMEWORK INTEGRATION -->
+      <section class="card usage-card" aria-labelledby="usage-title">
+        <div class="card-head">
+          <h2 id="usage-title">Hướng dẫn cài đặt & tích hợp</h2>
+        </div>
+        <nav id="usage-tabs" class="tabs" role="tablist" aria-label="Khung làm việc"></nav>
+        <p id="usage-desc" class="usage-desc"></p>
+
+        <div id="steps-container" class="steps-container"></div>
+      </section>
+
+      <!-- SECTION 3: MASTER DATA CUSTOMIZATION -->
+      <section class="card" aria-labelledby="master-title">
+        <div class="card-head">
+          <h2 id="master-title">Cấu hình Master Data tiền tệ (API)</h2>
+          <div class="head-actions">
+            <button id="add-currency-btn" type="button" class="ghost-btn small">+ Thêm mã</button>
+            <button id="export-btn" type="button" class="ghost-btn small">Sao chép TS code</button>
+            <button id="reset-btn" type="button" class="ghost-btn small">Khôi phục mặc định</button>
+          </div>
+        </div>
+        <p class="hint">Cấu hình tiền tệ active.</p>
+        <div class="table-wrap">
+          <table class="master">
+            <thead>
+              <tr>
+                <th>Mã</th>
+                <th>Tên đơn vị chính</th>
+                <th>Xử lý lẻ</th>
+                <th>Scale</th>
+                <th>Đọc lẻ</th>
+                <th>Lẻ số ít</th>
+                <th>Lẻ số nhiều</th>
+                <th>Active</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="master-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>
+        <strong>n2cur</strong> v1.0.0 · Phát triển bởi <a href="https://github.com/dongtrieuit" target="_blank" rel="noopener">dongtrieuit</a> ·
+        Mã nguồn trên <a href="https://github.com/dongtrieuit/n2cur.git" target="_blank" rel="noopener">GitHub</a> (MIT License).
+      </p>
+    </footer>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
