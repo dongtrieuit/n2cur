@@ -58,7 +58,7 @@
   "bugs": {
     "url": "https://github.com/dongtrieuit/n2cur/issues"
   },
-  "homepage": "https://github.com/dongtrieuit/n2cur#readme",
+  "homepage": "https://n2cur.dts.io.vn/",
   "engines": {
     "node": ">=14"
   },
