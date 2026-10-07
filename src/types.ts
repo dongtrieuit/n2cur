@@ -22,6 +22,8 @@ export interface CurrencyConfig {
   decimal_handling: DecimalHandling;
   /** Số chữ số phần lẻ chuẩn (2 = nhân 100). */
   decimal_scale: number;
+  /** Dấu thập phân khi phân tích chuỗi đầu vào. Mặc định `.` nếu không khai báo. */
+  decimal_separator?: '.' | ',';
   /** Cho phép đọc phần lẻ ra văn bản. */
   decimal_allowed: boolean;
   /** Tên đơn vị lẻ khi giá trị lẻ = 1 (penny, cent). */
@@ -46,7 +48,7 @@ export type AmountInput = number | bigint | string;
 
 export interface ReadOptions {
   /**
-   * Dấu thập phân khi đầu vào là chuỗi. Mặc định `'.'`.
+   * Ghi đè dấu thập phân trong cấu hình tiền tệ khi đầu vào là chuỗi. Mặc định lấy từ Master Data, hoặc `'.'` nếu không khai báo.
    * - `'.'`: `"1005001.25"` hoặc `"1,005,001.25"` (dấu `,` là phân cách nghìn).
    * - `','`: `"1.005.001,25"` (dấu `.` là phân cách nghìn).
    */

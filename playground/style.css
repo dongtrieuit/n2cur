@@ -135,6 +135,12 @@ body {
 .card-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
 .card-head h2 { margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--text); }
 .head-actions { display: flex; gap: 8px; }
+.usage-card > details > summary { list-style: none; cursor: pointer; margin-bottom: 0; }
+.usage-card > details > summary::-webkit-details-marker { display: none; }
+.usage-card > details > summary::after { content: '⌄'; color: var(--muted); font-size: 1.25rem; transition: transform 0.2s ease; }
+.usage-card > details[open] > summary { margin-bottom: 16px; }
+.usage-card > details[open] > summary::after { transform: rotate(180deg); }
+.usage-card > details > summary:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; border-radius: 4px; }
 
 /* Tabs for Documentation Nav */
 .tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }

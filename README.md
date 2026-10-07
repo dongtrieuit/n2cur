@@ -246,6 +246,7 @@ readMoney('1.005.001,25', 'USD', { decimalSeparator: ',' });
 | `currency_name_en_plural` | `string?` | Tên đơn vị chính số nhiều bằng Tiếng Anh (`US dollars`, `pounds`...) |
 | `decimal_handling` | `'READ' \| 'IGNORE' \| 'REJECT'` | Cách xử lý phần lẻ (`READ`: đọc lẻ, `IGNORE`: bỏ qua, `REJECT`: từ chối) |
 | `decimal_scale` | `number` | Số chữ số tối đa phần lẻ (vd: 2 chữ số cent) |
+| `decimal_separator` | `'.' \| ','` | Dấu thập phân dùng để phân tích chuỗi đầu vào; mặc định `'.'` |
 | `decimal_allowed` | `boolean` | Cho phép đọc phần lẻ ra chữ hay không |
 | `minor_unit_singular` | `string?` | Đơn vị lẻ số ít tiếng Việt (`cent`, `penny`...) |
 | `minor_unit_plural` | `string?` | Đơn vị lẻ số nhiều tiếng Việt (`cents`, `pence`...) |
@@ -273,4 +274,3 @@ Tạo instance đọc tiền với danh mục Master Data riêng từ API và th
 Phát triển bởi **[dongtrieuit](https://github.com/dongtrieuit)**.
 
 Mã nguồn mở cấp phép theo giấy phép [MIT License](LICENSE). Repository chính thức: [https://github.com/dongtrieuit/n2cur.git](https://github.com/dongtrieuit/n2cur.git).
-

@@ -41,6 +41,11 @@ function validateCurrency(c: CurrencyConfig, lang: Lang): void {
     fail(messages.detailBadHandling(lang, DECIMAL_HANDLINGS.join(' / ')));
   }
   if (!Number.isInteger(c.decimal_scale) || c.decimal_scale < 0) fail(messages.detailBadScale(lang));
+  if (c.decimal_separator !== undefined && c.decimal_separator !== '.' && c.decimal_separator !== ',') {
+    throw new MoneyReaderError('INVALID_CONFIG', messages.invalidDecimalSeparator(lang, String(c.decimal_separator)), {
+      currency_code: code,
+    });
+  }
   if (
     c.decimal_handling === 'READ' &&
     c.decimal_allowed &&
@@ -77,7 +82,7 @@ function resolveMinorUnitName(c: CurrencyConfig, minorDigits: string, lang: Lang
     const unit = c.minor_unit_singular_en ?? c.minor_unit_singular;
     return String(unit ?? '').trim();
   }
-  const unit = c.minor_unit_plural_en ?? c.minor_unit_singular_en ?? c.minor_unit_plural;
+  const unit = c.minor_unit_plural_en ?? c.minor_unit_plural;
   return String(unit ?? '').trim();
 }
 
@@ -89,7 +94,10 @@ function resolveMinorUnitName(c: CurrencyConfig, minorDigits: string, lang: Lang
  * reader.read('12.02', 'GBP', { lang: 'en' }); // "Twelve pounds and two pence"
  */
 export function createMoneyReader(options: MoneyReaderOptions = {}): MoneyReader {
-  const defaultLang: Lang = options.lang === 'en' ? 'en' : 'vi';
+  const defaultLang = options.lang ?? 'vi';
+  if (defaultLang !== 'vi' && defaultLang !== 'en') {
+    throw new MoneyReaderError('INVALID_CONFIG', messages.invalidLang(String(defaultLang)));
+  }
   const source = options.currencies ?? DEFAULT_CURRENCIES;
   if (!Array.isArray(source)) {
     throw new MoneyReaderError('INVALID_CONFIG', messages.currenciesNotArray(defaultLang));
@@ -125,7 +133,10 @@ export function createMoneyReader(options: MoneyReaderOptions = {}): MoneyReader
     const vndStyle = code === VND;
 
     // Bước 3: tách phần nguyên / thập phân.
-    const { integer, fraction } = parseAmount(amount, readOptions);
+    const { integer, fraction } = parseAmount(amount, {
+      ...readOptions,
+      decimalSeparator: readOptions.decimalSeparator ?? currency.decimal_separator,
+    });
 
     // Bước 5: xử lý phần thập phân.
     let minorDigits: string | null = null;

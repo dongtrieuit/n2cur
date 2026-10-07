@@ -116,7 +116,7 @@
           <span class="badge">MIT License</span>
           <span class="badge primary">v1.1.0 (VI & EN)</span>
         </div>
-        <h1>Đọc số tiền <span class="grad">thành chữ</span> tiếng Việt &amp; Tiếng Anh</h1>
+        <h1>Đọc tiền <span class="grad">thành chữ</span>: Việt &amp; Anh</h1>
         <p class="subtitle">
           Thư viện JavaScript đọc số tiền thành chữ tiếng Việt &amp; Tiếng Anh (VND, USD, EUR, GBP, JPY, SGD) cho React, Angular, Vue, Node.js &amp; CDN.
         </p>
@@ -146,13 +146,6 @@
               <button id="lang-en" type="button" class="seg lang-seg" data-lang="en">English</button>
             </div>
           </div>
-          <div class="field">
-            <span class="field-label">Dấu thập phân</span>
-            <div class="segmented" role="radiogroup" aria-label="Dấu thập phân">
-              <button id="sep-dot" type="button" class="seg sep-seg active" data-sep=".">1,234.56</button>
-              <button id="sep-comma" type="button" class="seg sep-seg" data-sep=",">1.234,56</button>
-            </div>
-          </div>
         </div>
 
         <div id="result-box" class="result" aria-live="polite">
@@ -169,13 +162,15 @@
 
       <!-- SECTION 2: DOCUMENTATION & FRAMEWORK INTEGRATION -->
       <section class="card usage-card" aria-labelledby="usage-title">
-        <div class="card-head">
-          <h2 id="usage-title">Hướng dẫn cài đặt & tích hợp</h2>
-        </div>
-        <nav id="usage-tabs" class="tabs" role="tablist" aria-label="Khung làm việc"></nav>
-        <p id="usage-desc" class="usage-desc"></p>
+        <details>
+          <summary class="card-head">
+            <h2 id="usage-title">Hướng dẫn cài đặt & tích hợp</h2>
+          </summary>
+          <nav id="usage-tabs" class="tabs" role="tablist" aria-label="Khung làm việc"></nav>
+          <p id="usage-desc" class="usage-desc"></p>
 
-        <div id="steps-container" class="steps-container"></div>
+          <div id="steps-container" class="steps-container"></div>
+        </details>
       </section>
 
       <!-- SECTION 3: MASTER DATA CUSTOMIZATION -->
@@ -199,6 +194,7 @@
                 <th>Tên EN (Nhiều)</th>
                 <th>Xử lý lẻ</th>
                 <th>Scale</th>
+                <th>Dấu thập phân</th>
                 <th>Đọc lẻ</th>
                 <th>Lẻ VI ít</th>
                 <th>Lẻ VI nhiều</th>

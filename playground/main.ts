@@ -5,7 +5,6 @@ import {
   type CurrencyConfig,
   type DecimalHandling,
   type MoneyReader,
-  type ReadOptions,
 } from '../src';
 import { FRAMEWORK_GUIDES, highlight } from './snippets';
 
@@ -26,13 +25,13 @@ const stepsContainer = $<HTMLDivElement>('steps-container');
 
 const masterBody = $<HTMLTableSectionElement>('master-body');
 
-const ERROR_LABELS: Record<string, string> = {
-  CURRENCY_NOT_FOUND: 'Không tìm thấy tiền tệ',
-  INVALID_AMOUNT: 'Số tiền không hợp lệ',
-  DECIMAL_REJECTED: 'Từ chối phần thập phân',
-  DECIMAL_SCALE_EXCEEDED: 'Vượt quá decimal_scale',
-  MINOR_UNIT_MISSING: 'Thiếu đơn vị lẻ',
-  INVALID_CONFIG: 'Cấu hình không hợp lệ',
+const ERROR_LABELS: Record<string, { vi: string; en: string }> = {
+  CURRENCY_NOT_FOUND: { vi: 'Không tìm thấy tiền tệ', en: 'Currency not found' },
+  INVALID_AMOUNT: { vi: 'Số tiền không hợp lệ', en: 'Invalid amount' },
+  DECIMAL_REJECTED: { vi: 'Từ chối phần thập phân', en: 'Decimal part rejected' },
+  DECIMAL_SCALE_EXCEEDED: { vi: 'Vượt quá decimal_scale', en: 'Decimal scale exceeded' },
+  MINOR_UNIT_MISSING: { vi: 'Thiếu đơn vị lẻ', en: 'Minor unit missing' },
+  INVALID_CONFIG: { vi: 'Cấu hình không hợp lệ', en: 'Invalid configuration' },
 };
 
 const cloneDefaults = (): CurrencyConfig[] => DEFAULT_CURRENCIES.map((c) => ({ ...c }));
@@ -40,7 +39,6 @@ const cloneDefaults = (): CurrencyConfig[] => DEFAULT_CURRENCIES.map((c) => ({ .
 let currencies: CurrencyConfig[] = cloneDefaults();
 let reader: MoneyReader = createMoneyReader({ currencies });
 let currentLang: 'vi' | 'en' = 'vi';
-let decimalSeparator: NonNullable<ReadOptions['decimalSeparator']> = '.';
 let activeSnippetId = 'react';
 
 function rebuildReader(): void {
@@ -73,7 +71,7 @@ function renderCurrencyOptions(): void {
 function renderResult(): void {
   const amountStr = amountInput.value.trim();
   const codeStr = currencySelect.value;
-  const res = reader.safeRead(amountStr, codeStr, { lang: currentLang, decimalSeparator });
+  const res = reader.safeRead(amountStr, codeStr, { lang: currentLang });
 
   resultText.classList.remove('flash');
   void resultText.offsetWidth;
@@ -87,7 +85,7 @@ function renderResult(): void {
     copyBtn.hidden = false;
   } else {
     resultBox.classList.add('error');
-    resultLabel.textContent = ERROR_LABELS[res.error.code] ?? (currentLang === 'en' ? 'Error' : 'Lỗi');
+    resultLabel.textContent = ERROR_LABELS[res.error.code]?.[currentLang] ?? (currentLang === 'en' ? 'Error' : 'Lỗi');
     resultText.textContent = res.error.message;
     resultCode.textContent = res.error.code;
     copyBtn.hidden = true;
@@ -221,6 +219,24 @@ function switchCell(row: CurrencyConfig, field: 'active' | 'decimal_allowed', tr
   return td;
 }
 
+function decimalSeparatorCell(row: CurrencyConfig): HTMLTableCellElement {
+  const td = document.createElement('td');
+  const select = document.createElement('select');
+  for (const separator of ['.', ','] as const) {
+    const option = document.createElement('option');
+    option.value = separator;
+    option.textContent = separator === '.' ? '1,234.56' : '1.234,56';
+    select.append(option);
+  }
+  select.value = row.decimal_separator ?? '.';
+  select.addEventListener('change', () => {
+    row.decimal_separator = select.value as '.' | ',';
+    refreshAll();
+  });
+  td.append(select);
+  return td;
+}
+
 function renderMasterTable(): void {
   masterBody.innerHTML = '';
   currencies.forEach((row, index) => {
@@ -276,6 +292,7 @@ function renderMasterTable(): void {
     tr.append(
       handlingTd,
       scaleTd,
+      decimalSeparatorCell(row),
       switchCell(row, 'decimal_allowed'),
       textCell(row, 'minor_unit_singular'),
       textCell(row, 'minor_unit_plural'),
@@ -307,25 +324,9 @@ function setLang(lang: 'vi' | 'en'): void {
   renderResult();
 }
 
-function setSeparator(sep: '.' | ','): void {
-  decimalSeparator = sep;
-  document.querySelectorAll<HTMLButtonElement>('.sep-seg').forEach((b) => {
-    const active = b.dataset.sep === sep;
-    b.classList.toggle('active', active);
-    b.setAttribute('aria-checked', String(active));
-  });
-  renderResult();
-}
-
 document.querySelectorAll<HTMLButtonElement>('.lang-seg').forEach((btn) =>
   btn.addEventListener('click', () => {
     setLang(btn.dataset.lang as 'vi' | 'en');
-  }),
-);
-
-document.querySelectorAll<HTMLButtonElement>('.sep-seg').forEach((btn) =>
-  btn.addEventListener('click', () => {
-    setSeparator(btn.dataset.sep as '.' | ',');
   }),
 );
 
@@ -369,6 +370,7 @@ $('add-currency-btn').addEventListener('click', () => {
     currency_name: 'tiền mới',
     decimal_handling: 'REJECT',
     decimal_scale: 0,
+    decimal_separator: '.',
     decimal_allowed: false,
     minor_unit_singular: '',
     minor_unit_plural: '',

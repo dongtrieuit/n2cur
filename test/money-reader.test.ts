@@ -237,6 +237,90 @@ describe('readMoney – Tiếng Anh (lang: "en")', () => {
     expect(reader.read('100.50', 'MYR', { lang: 'en' })).toBe('One hundred MYR and fifty sen');
   });
 
+  it('dùng lang mặc định của reader và cho phép ghi đè theo từng lần đọc', () => {
+    const reader = createMoneyReader({ lang: 'en' });
+    expect(reader.read(2, 'USD')).toBe('Two US dollars');
+    expect(reader.read(2, 'USD', { lang: 'vi' })).toBe('Hai đô la Mỹ');
+  });
+
+  it('từ chối lang không hợp lệ ở cấu hình reader và tùy chọn đọc', () => {
+    expectError(() => createMoneyReader({ lang: 'fr' as never }), 'INVALID_CONFIG');
+    const reader = createMoneyReader();
+    expectError(() => reader.read(1, 'USD', { lang: 'fr' as never }), 'INVALID_CONFIG');
+  });
+
+  it('plural unit fallback dùng minor_unit_plural khi thiếu tên plural tiếng Anh', () => {
+    const reader = createMoneyReader({
+      currencies: [
+        {
+          currency_code: 'MYR',
+          currency_name: 'ringgit Malaysia',
+          decimal_handling: 'READ',
+          decimal_scale: 2,
+          decimal_allowed: true,
+          minor_unit_singular: 'sen',
+          minor_unit_plural: 'sens',
+          minor_unit_singular_en: 'sen',
+          active: true,
+        },
+      ],
+    });
+    expect(reader.read('1.02', 'MYR', { lang: 'en' })).toBe('One MYR and two sens');
+  });
+
+  it('đọc decimal separator kiểu comma, số dạng mũ, IGNORE và REJECT bằng tiếng Anh', () => {
+    expect(readMoney('1.234,50', 'USD', { lang: 'en', decimalSeparator: ',' })).toBe(
+      'One thousand two hundred thirty-four US dollars and fifty cents',
+    );
+    expect(readMoney(1e21, 'USD', { lang: 'en' })).toBe('One sextillion US dollars');
+    expect(readMoney('12.75', 'JPY', { lang: 'en' })).toBe('Twelve yen');
+
+    const reader = createMoneyReader({
+      currencies: [
+        {
+          currency_code: 'KRW',
+          currency_name: 'won Hàn Quốc',
+          currency_name_en: 'won',
+          currency_name_en_plural: 'won',
+          decimal_handling: 'REJECT',
+          decimal_scale: 0,
+          decimal_allowed: false,
+          active: true,
+        },
+      ],
+    });
+    expect(reader.read('100.00', 'KRW', { lang: 'en' })).toBe('One hundred won');
+    expectError(() => reader.read('100.5', 'KRW', { lang: 'en' }), 'DECIMAL_REJECTED');
+  });
+
+  it('lấy decimal separator theo từng currency từ Master Data, cho phép override theo lần đọc', () => {
+    const usd = DEFAULT_CURRENCIES.find((currency) => currency.currency_code === 'USD')!;
+    const reader = createMoneyReader({ currencies: [{ ...usd, decimal_separator: ',' }] });
+
+    expect(reader.read('1.234,50', 'USD', { lang: 'en' })).toBe(
+      'One thousand two hundred thirty-four US dollars and fifty cents',
+    );
+    expect(reader.read('1,234.50', 'USD', { lang: 'en', decimalSeparator: '.' })).toBe(
+      'One thousand two hundred thirty-four US dollars and fifty cents',
+    );
+  });
+
+  it('từ chối decimal_separator sai trong Master Data', () => {
+    const usd = DEFAULT_CURRENCIES.find((currency) => currency.currency_code === 'USD')!;
+    const reader = createMoneyReader({ currencies: [{ ...usd, decimal_separator: ';' as never }] });
+    expectError(() => reader.read('1.00', 'USD'), 'INVALID_CONFIG');
+  });
+
+  it('chuyển số nguyên vượt giới hạn tiếng Anh thành MoneyReaderError', () => {
+    const res = safeReadMoney(`1${'0'.repeat(36)}`, 'USD', { lang: 'en' });
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.error).toBeInstanceOf(MoneyReaderError);
+      expect(res.error.code).toBe('INVALID_AMOUNT');
+      expect(res.error.message).toContain('largest English scale is decillion');
+    }
+  });
+
   it('localized error messages khi lang: "en"', () => {
     const res = safeReadMoney(1, 'XYZ', { lang: 'en' });
     expect(res.ok).toBe(false);
@@ -253,5 +337,3 @@ describe('readMoney – Tiếng Anh (lang: "en")', () => {
     }
   });
 });
-
-
