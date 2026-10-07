@@ -68,6 +68,10 @@ body {
 }
 
 .top-actions { display: flex; align-items: center; gap: 12px; }
+.global-language { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2); }
+.global-lang-btn { min-width: 38px; padding: 6px 8px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); font: inherit; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
+.global-lang-btn.active { background: var(--surface); color: var(--primary); box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12); }
+.global-lang-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .repo-link {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 0.85rem; font-weight: 600; color: var(--text); text-decoration: none;
@@ -117,6 +121,18 @@ body {
   font-style: italic;
   color: #334155;
   text-align: left;
+}
+.dev-intro-quote code {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  background: #0f172a;
+  color: #f8fafc;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.88em;
+  font-style: normal;
+  white-space: nowrap;
 }
 .meta-author { font-weight: 600; color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--primary); }
 
@@ -307,6 +323,7 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
   .brand-name { font-size: 1.1rem; }
   .brand-tag { font-size: 0.66rem; padding: 2px 6px; }
   .top-actions { flex: 1 1 auto; justify-content: flex-end; gap: 6px; }
+  .global-lang-btn { min-width: 34px; padding: 6px; }
   .repo-link { padding: 7px 9px; }
   .repo-link span { display: none; }
   .install-badge-btn { gap: 6px; padding: 8px 9px; font-size: 0.74rem; }

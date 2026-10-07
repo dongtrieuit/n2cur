@@ -25,6 +25,68 @@ const stepsContainer = $<HTMLDivElement>('steps-container');
 
 const masterBody = $<HTMLTableSectionElement>('master-body');
 
+const UI_TEXT: Record<'vi' | 'en', Record<string, string>> = {
+  vi: {
+    'language-label': 'Ngôn ngữ', 'brand-title': 'n2cur Trang chủ Demo Website', 'npm-title': 'n2cur trên npm registry',
+    'github-title': 'Mã nguồn GitHub', 'copy-install-title': 'Sao chép lệnh cài đặt',
+    'hero-title': 'Đọc tiền <span class="grad">thành chữ</span>: Việt &amp; Anh',
+    'hero-subtitle': 'Thư viện JavaScript đọc số tiền thành chữ tiếng Việt &amp; Tiếng Anh (VND, USD, EUR, GBP, JPY, SGD) cho React, Angular, Vue, Node.js &amp; CDN.',
+    'hero-quote': 'Cần đọc số tiền thành chữ cho hóa đơn, thanh toán? Cài <code>npm i n2cur</code> là dùng ngay.',
+    'tester-title': 'Dùng thử', 'amount-label': 'Số tiền', 'currency-label': 'Tiền tệ', result: 'Kết quả', copy: 'Sao chép',
+    'copy-title': 'Sao chép', 'usage-title': 'Hướng dẫn cài đặt & tích hợp', frameworks: 'Khung làm việc',
+    'master-title': 'Cấu hình Master Data tiền tệ (API)', 'add-currency': '+ Thêm mã', 'copy-ts': 'Sao chép TS code',
+    reset: 'Khôi phục mặc định', 'master-hint': 'Cấu hình tiền tệ active.', 'col-code': 'Mã', 'col-name-vi': 'Tên VI',
+    'col-name-en-singular': 'Tên EN (Ít)', 'col-name-en-plural': 'Tên EN (Nhiều)', 'col-decimal-handling': 'Xử lý lẻ',
+    'col-scale': 'Scale', 'col-decimal-separator': 'Dấu thập phân', 'col-read-decimal': 'Đọc lẻ',
+    'col-minor-vi-singular': 'Lẻ VI ít', 'col-minor-vi-plural': 'Lẻ VI nhiều',
+    'col-minor-en-singular': 'Lẻ EN ít', 'col-minor-en-plural': 'Lẻ EN nhiều', 'col-active': 'Active',
+    'footer-copy': 'Phát triển bởi', 'footer-source': 'Mã nguồn trên', 'footer-license': 'MIT License',
+    'step-copy': 'Sao chép', 'step-copied': 'Đã chép!', 'copy-error': 'Lỗi', 'npm-copied': 'Đã chép npm i n2cur!',
+    'export-copied': 'Đã chép TS code!', 'remove-title': 'Xóa', 'gif-title': 'Demo cài đặt, setup & coding:',
+  },
+  en: {
+    'language-label': 'Language', 'brand-title': 'n2cur demo homepage', 'npm-title': 'n2cur on npm registry',
+    'github-title': 'GitHub source code', 'copy-install-title': 'Copy install command',
+    'hero-title': 'Money <span class="grad">in words</span>: Vietnamese &amp; English',
+    'hero-subtitle': 'A JavaScript library that spells out amounts in Vietnamese and English (VND, USD, EUR, GBP, JPY, SGD) for React, Angular, Vue, Node.js, and CDN.',
+    'hero-quote': 'Need to spell out amounts for invoices or payments? Install <code>npm i n2cur</code> and get started.',
+    'tester-title': 'Try it', 'amount-label': 'Amount', 'currency-label': 'Currency', result: 'Result', copy: 'Copy',
+    'copy-title': 'Copy', 'usage-title': 'Installation & integration', frameworks: 'Frameworks',
+    'master-title': 'Currency Master Data (API)', 'add-currency': '+ Add currency', 'copy-ts': 'Copy TS code',
+    reset: 'Reset defaults', 'master-hint': 'Configure active currencies.', 'col-code': 'Code', 'col-name-vi': 'Name (VI)',
+    'col-name-en-singular': 'Name EN (singular)', 'col-name-en-plural': 'Name EN (plural)', 'col-decimal-handling': 'Decimal handling',
+    'col-scale': 'Scale', 'col-decimal-separator': 'Decimal separator', 'col-read-decimal': 'Read decimals',
+    'col-minor-vi-singular': 'Minor VI (singular)', 'col-minor-vi-plural': 'Minor VI (plural)',
+    'col-minor-en-singular': 'Minor EN (singular)', 'col-minor-en-plural': 'Minor EN (plural)', 'col-active': 'Active',
+    'footer-copy': 'Built by', 'footer-source': 'Source on', 'footer-license': 'MIT License',
+    'step-copy': 'Copy', 'step-copied': 'Copied!', 'copy-error': 'Error', 'npm-copied': 'Copied npm i n2cur!',
+    'export-copied': 'Copied TS code!', 'remove-title': 'Remove', 'gif-title': 'Setup & coding demo:',
+  },
+};
+
+const GUIDE_EN: Record<string, { desc: string; steps: string[] }> = {
+  react: { desc: 'Install and use n2cur in a React application (Next.js, Vite, or CRA).', steps: [
+    'Step 1: Install n2cur with npm', 'Step 2: Create a component to spell out amounts',
+    'Step 3: Use the component in your UI', 'Step 4: Load Master Data from a backend API (optional)',
+  ] },
+  angular: { desc: 'Create a standalone pipe and use it directly in an Angular template.', steps: [
+    'Step 1: Install n2cur', 'Step 2: Create a standalone amount-to-words pipe',
+    'Step 3: Declare and use the pipe in an Angular template', 'Step 4: Configure Master Data with an Angular service (optional)',
+  ] },
+  vue: { desc: 'Integrate n2cur with the Vue 3 Composition API.', steps: [
+    'Step 1: Install n2cur', 'Step 2: Create an amount-to-words component',
+    'Step 3: Use the component in a Vue app', 'Step 4: Configure Master Data (optional)',
+  ] },
+  basic: { desc: 'Use n2cur directly in Node.js or plain JavaScript/TypeScript.', steps: [
+    'Step 1: Install the n2cur package', 'Step 2: Import the library and spell out an amount',
+    'Step 3: Use a comma as the decimal separator', 'Step 4: Load Master Data from an API',
+  ] },
+  cdn: { desc: 'Add n2cur to an HTML page with a script tag; no build tool required.', steps: [
+    'Step 1: Load n2cur from the unpkg CDN', 'Step 2: Use the global window.N2Cur object',
+    'Step 3: Configure Master Data with N2Cur.createMoneyReader',
+  ] },
+};
+
 const ERROR_LABELS: Record<string, { vi: string; en: string }> = {
   CURRENCY_NOT_FOUND: { vi: 'Không tìm thấy tiền tệ', en: 'Currency not found' },
   INVALID_AMOUNT: { vi: 'Số tiền không hợp lệ', en: 'Invalid amount' },
@@ -35,10 +97,17 @@ const ERROR_LABELS: Record<string, { vi: string; en: string }> = {
 };
 
 const cloneDefaults = (): CurrencyConfig[] => DEFAULT_CURRENCIES.map((c) => ({ ...c }));
+const savedLanguage = (() => {
+  try {
+    return localStorage.getItem('n2cur-lang');
+  } catch {
+    return null;
+  }
+})();
 
 let currencies: CurrencyConfig[] = cloneDefaults();
 let reader: MoneyReader = createMoneyReader({ currencies });
-let currentLang: 'vi' | 'en' = 'vi';
+let currentLang: 'vi' | 'en' = savedLanguage === 'en' ? 'en' : 'vi';
 let activeSnippetId = 'react';
 
 function rebuildReader(): void {
@@ -58,10 +127,10 @@ function renderCurrencyOptions(): void {
     const opt = document.createElement('option');
     opt.value = code;
     if (config) {
-      const displayName = currentLang === 'en' ? (config.currency_name_en ?? config.currency_name) : config.currency_name;
+      const displayName = currentLang === 'en' ? (config.currency_name_en ?? code) : config.currency_name;
       opt.textContent = `${code} · ${displayName}`;
     } else {
-      opt.textContent = `${code} · (inactive)`;
+      opt.textContent = `${code} · (${currentLang === 'en' ? 'inactive' : 'ngừng hoạt động'})`;
     }
     currencySelect.append(opt);
   }
@@ -79,7 +148,7 @@ function renderResult(): void {
 
   if (res.ok) {
     resultBox.classList.remove('error');
-    resultLabel.textContent = currentLang === 'en' ? 'Result' : 'Kết quả';
+    resultLabel.textContent = UI_TEXT[currentLang].result!;
     resultText.textContent = res.text;
     resultCode.textContent = '';
     copyBtn.hidden = false;
@@ -110,7 +179,7 @@ function renderUsage(): void {
     usageTabs.append(btn);
   }
 
-  usageDesc.textContent = currentGuide.desc;
+  usageDesc.textContent = currentLang === 'en' ? GUIDE_EN[currentGuide.id]?.desc ?? currentGuide.desc : currentGuide.desc;
   stepsContainer.innerHTML = '';
 
   if (currentGuide.gifUrl) {
@@ -118,14 +187,14 @@ function renderUsage(): void {
     gifBanner.className = 'framework-gif-banner';
     gifBanner.innerHTML = `
       <div class="gif-header">
-        <span class="gif-title">Demo cài đặt, setup &amp; coding: ${currentGuide.label}</span>
+        <span class="gif-title">${UI_TEXT[currentLang]['gif-title']} ${currentGuide.label}</span>
       </div>
-      <img class="framework-demo-gif" src="${currentGuide.gifUrl}" alt="Demo ${currentGuide.label} Setup" />
+      <img class="framework-demo-gif" src="${currentGuide.gifUrl}" alt="${UI_TEXT[currentLang]['gif-title']} ${currentGuide.label}" />
     `;
     stepsContainer.append(gifBanner);
   }
 
-  currentGuide.steps.forEach((step) => {
+  currentGuide.steps.forEach((step, index) => {
     const card = document.createElement('div');
     card.className = 'step-card';
 
@@ -134,7 +203,7 @@ function renderUsage(): void {
 
     const titleEl = document.createElement('span');
     titleEl.className = 'step-title';
-    titleEl.textContent = step.title;
+    titleEl.textContent = currentLang === 'en' ? GUIDE_EN[currentGuide.id]?.steps[index] ?? step.title : step.title;
 
     header.append(titleEl);
 
@@ -158,15 +227,15 @@ function renderUsage(): void {
     const copyBtnEl = document.createElement('button');
     copyBtnEl.type = 'button';
     copyBtnEl.className = 'ghost-btn small';
-    copyBtnEl.textContent = 'Sao chép';
+    copyBtnEl.textContent = UI_TEXT[currentLang]['step-copy']!;
     copyBtnEl.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(step.code);
-        copyBtnEl.textContent = 'Đã chép!';
+        copyBtnEl.textContent = UI_TEXT[currentLang]['step-copied']!;
       } catch {
-        copyBtnEl.textContent = 'Lỗi';
+        copyBtnEl.textContent = UI_TEXT[currentLang]['copy-error']!;
       }
-      setTimeout(() => (copyBtnEl.textContent = 'Sao chép'), 1400);
+      setTimeout(() => (copyBtnEl.textContent = UI_TEXT[currentLang]['step-copy']!), 1400);
     });
 
     panelHead.append(codeLabel, copyBtnEl);
@@ -254,7 +323,10 @@ function renderMasterTable(): void {
     const select = document.createElement('select');
     for (const h of ['READ', 'IGNORE', 'REJECT'] as DecimalHandling[]) {
       const opt = document.createElement('option');
-      opt.value = opt.textContent = h;
+      opt.value = h;
+      opt.textContent = currentLang === 'en'
+        ? ({ READ: 'Read', IGNORE: 'Ignore', REJECT: 'Reject' } as const)[h]
+        : h;
       select.append(opt);
     }
     select.value = row.decimal_handling;
@@ -280,7 +352,7 @@ function renderMasterTable(): void {
     const remove = document.createElement('button');
     remove.type = 'button';
     remove.className = 'icon-btn';
-    remove.title = 'Xóa';
+    remove.title = UI_TEXT[currentLang]['remove-title']!;
     remove.textContent = '×';
     remove.addEventListener('click', () => {
       currencies.splice(index, 1);
@@ -315,16 +387,50 @@ function refreshAll(): void {
 
 function setLang(lang: 'vi' | 'en'): void {
   currentLang = lang;
-  document.querySelectorAll<HTMLButtonElement>('.lang-seg').forEach((b) => {
+  try {
+    localStorage.setItem('n2cur-lang', lang);
+  } catch {
+    /* language selection still works if storage is unavailable */
+  }
+  document.documentElement.lang = lang;
+  document.title = lang === 'en' ? 'n2cur — Money in words' : 'n2cur — Đọc số tiền thành chữ';
+  const metaDescription = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+  if (metaDescription) {
+    metaDescription.content = lang === 'en'
+      ? 'Spell out currency amounts in Vietnamese and English with n2cur.'
+      : 'Đọc số tiền thành chữ tiếng Việt và tiếng Anh với thư viện n2cur.';
+  }
+  document.querySelectorAll<HTMLElement>('[data-i18n]').forEach((element) => {
+    const key = element.dataset.i18n!;
+    element.textContent = UI_TEXT[lang][key] ?? element.textContent ?? '';
+  });
+  document.querySelectorAll<HTMLElement>('[data-i18n-title]').forEach((element) => {
+    const key = element.dataset.i18nTitle!;
+    element.title = UI_TEXT[lang][key] ?? element.title;
+  });
+  document.querySelectorAll<HTMLElement>('[data-i18n-aria-label]').forEach((element) => {
+    const key = element.dataset.i18nAriaLabel!;
+    element.setAttribute('aria-label', UI_TEXT[lang][key] ?? element.getAttribute('aria-label') ?? '');
+  });
+  $('hero-title').innerHTML = UI_TEXT[lang]['hero-title']!;
+  $('hero-subtitle').innerHTML = UI_TEXT[lang]['hero-subtitle']!;
+  $('hero-quote').innerHTML = UI_TEXT[lang]['hero-quote']!;
+  $('master-hint').textContent = UI_TEXT[lang]['master-hint']!;
+  $('footer-copy').textContent = UI_TEXT[lang]['footer-copy']!;
+  $('footer-source').textContent = UI_TEXT[lang]['footer-source']!;
+  $('footer-license').textContent = UI_TEXT[lang]['footer-license']!;
+  document.querySelectorAll<HTMLButtonElement>('.global-lang-btn').forEach((b) => {
     const active = b.dataset.lang === lang;
     b.classList.toggle('active', active);
     b.setAttribute('aria-checked', String(active));
   });
+  renderMasterTable();
+  renderUsage();
   renderCurrencyOptions();
   renderResult();
 }
 
-document.querySelectorAll<HTMLButtonElement>('.lang-seg').forEach((btn) =>
+document.querySelectorAll<HTMLButtonElement>('.global-lang-btn').forEach((btn) =>
   btn.addEventListener('click', () => {
     setLang(btn.dataset.lang as 'vi' | 'en');
   }),
@@ -337,11 +443,11 @@ currencySelect.addEventListener('change', renderResult);
 copyBtn.addEventListener('click', async () => {
   try {
     await navigator.clipboard.writeText(resultText.textContent ?? '');
-    copyText.textContent = 'Đã chép!';
+    copyText.textContent = UI_TEXT[currentLang]['step-copied']!;
   } catch {
-    copyText.textContent = 'Lỗi';
+    copyText.textContent = UI_TEXT[currentLang]['copy-error']!;
   }
-  setTimeout(() => (copyText.textContent = 'Sao chép'), 1400);
+  setTimeout(() => (copyText.textContent = UI_TEXT[currentLang].copy!), 1400);
 });
 
 const npmCopyBtn = $<HTMLButtonElement>('npm-copy-btn');
@@ -350,7 +456,7 @@ npmCopyBtn.addEventListener('click', async () => {
     await navigator.clipboard.writeText('npm i n2cur');
     const codeEl = npmCopyBtn.querySelector('code');
     if (codeEl) {
-      codeEl.textContent = 'Đã chép npm i n2cur!';
+      codeEl.textContent = UI_TEXT[currentLang]['npm-copied']!;
       setTimeout(() => (codeEl.textContent = 'npm i n2cur'), 1500);
     }
   } catch {
@@ -367,7 +473,7 @@ $('reset-btn').addEventListener('click', () => {
 $('add-currency-btn').addEventListener('click', () => {
   currencies.push({
     currency_code: 'NEW',
-    currency_name: 'tiền mới',
+    currency_name: currentLang === 'en' ? 'new currency' : 'tiền mới',
     decimal_handling: 'REJECT',
     decimal_scale: 0,
     decimal_separator: '.',
@@ -390,13 +496,14 @@ export const moneyReader = createMoneyReader({ currencies });`;
 
   try {
     await navigator.clipboard.writeText(code);
-    exportBtn.textContent = 'Đã chép TS code!';
+    exportBtn.textContent = UI_TEXT[currentLang]['export-copied']!;
   } catch {
-    exportBtn.textContent = 'Lỗi';
+    exportBtn.textContent = UI_TEXT[currentLang]['copy-error']!;
   }
-  setTimeout(() => (exportBtn.textContent = 'Sao chép TS code'), 1600);
+  setTimeout(() => (exportBtn.textContent = UI_TEXT[currentLang]['copy-ts']!), 1600);
 });
 
 renderMasterTable();
 renderUsage();
+setLang(currentLang);
 refreshAll();

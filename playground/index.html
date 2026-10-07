@@ -88,21 +88,25 @@
   </head>
   <body>
     <header class="topbar">
-      <a href="https://n2cur.dts.io.vn/" class="brand" title="n2cur Trang chủ Demo Website">
+      <a href="https://n2cur.dts.io.vn/" class="brand" title="n2cur Trang chủ Demo Website" data-i18n-title="brand-title">
         <span class="brand-logo">₫</span>
         <span class="brand-name">n2cur</span>
         <span class="brand-tag">v1.1.0</span>
       </a>
       <div class="top-actions">
-        <a href="https://www.npmjs.com/package/n2cur" target="_blank" rel="noopener" class="repo-link" title="n2cur trên npm registry">
+        <div class="global-language" role="radiogroup" aria-label="Ngôn ngữ / Language" data-i18n-aria-label="language-label">
+          <button id="lang-vi" class="global-lang-btn active" type="button" role="radio" aria-checked="true" data-lang="vi">VI</button>
+          <button id="lang-en" class="global-lang-btn" type="button" role="radio" aria-checked="false" data-lang="en">EN</button>
+        </div>
+        <a href="https://www.npmjs.com/package/n2cur" target="_blank" rel="noopener" class="repo-link" title="n2cur trên npm registry" data-i18n-title="npm-title">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0v24h24V0H0zm19.2 19.2H12V9.6h-2.4v9.6H4.8V4.8h14.4v14.4z"/></svg>
           <span>npm</span>
         </a>
-        <a href="https://github.com/dongtrieuit/n2cur.git" target="_blank" rel="noopener" class="repo-link" title="Mã nguồn GitHub">
+        <a href="https://github.com/dongtrieuit/n2cur.git" target="_blank" rel="noopener" class="repo-link" title="Mã nguồn GitHub" data-i18n-title="github-title">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
           <span>GitHub</span>
         </a>
-        <button id="npm-copy-btn" type="button" class="install-badge-btn" title="Sao chép lệnh cài đặt">
+        <button id="npm-copy-btn" type="button" class="install-badge-btn" title="Sao chép lệnh cài đặt" data-i18n-title="copy-install-title">
           <code>npm i n2cur</code>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         </button>
@@ -116,43 +120,36 @@
           <span class="badge">MIT License</span>
           <span class="badge primary">v1.1.0 (VI & EN)</span>
         </div>
-        <h1>Đọc tiền <span class="grad">thành chữ</span>: Việt &amp; Anh</h1>
-        <p class="subtitle">
+        <h1 id="hero-title">Đọc tiền <span class="grad">thành chữ</span>: Việt &amp; Anh</h1>
+        <p class="subtitle" id="hero-subtitle">
           Thư viện JavaScript đọc số tiền thành chữ tiếng Việt &amp; Tiếng Anh (VND, USD, EUR, GBP, JPY, SGD) cho React, Angular, Vue, Node.js &amp; CDN.
         </p>
-        <blockquote class="dev-intro-quote">
-          Đang làm tính năng hóa đơn/thanh toán mà đau đầu vụ đọc số tiền thành chữ? Thôi đừng tự code lại nữa mấy bác! Bộ quy tắc trong n2cur đã được tối ưu qua vô số vòng nghiệm thu khó tính từ BU ngân hàng. Cài 1 dòng <code>npm i n2cur</code> là xong ngay!
+        <blockquote class="dev-intro-quote" id="hero-quote">
+          Cần đọc số tiền thành chữ cho hóa đơn, thanh toán? Cài <code>npm i n2cur</code> là dùng ngay.
         </blockquote>
       </section>
 
       <!-- SECTION 1: INTERACTIVE QUICK TESTER -->
       <section class="card tester-card" aria-labelledby="tester-title">
         <div class="card-head">
-          <h2 id="tester-title">Dùng thử</h2>
+          <h2 id="tester-title" data-i18n="tester-title">Dùng thử</h2>
         </div>
         <div class="input-row">
           <label class="field amount-field">
-            <span class="field-label">Số tiền</span>
+            <span class="field-label" data-i18n="amount-label">Số tiền</span>
             <input id="amount-input" type="text" inputmode="decimal" autocomplete="off" value="1005001" />
           </label>
           <label class="field">
-            <span class="field-label">Tiền tệ</span>
+            <span class="field-label" data-i18n="currency-label">Tiền tệ</span>
             <select id="currency-select"></select>
           </label>
-          <div class="field">
-            <span class="field-label">Ngôn ngữ (Language)</span>
-            <div class="segmented" role="radiogroup" aria-label="Ngôn ngữ">
-              <button id="lang-vi" type="button" class="seg lang-seg active" data-lang="vi">Tiếng Việt</button>
-              <button id="lang-en" type="button" class="seg lang-seg" data-lang="en">English</button>
-            </div>
-          </div>
         </div>
 
         <div id="result-box" class="result" aria-live="polite">
           <div class="result-head">
             <span id="result-label" class="result-label">Kết quả</span>
-            <button id="copy-btn" type="button" class="ghost-btn small" title="Sao chép">
-              <span id="copy-text">Sao chép</span>
+            <button id="copy-btn" type="button" class="ghost-btn small" title="Sao chép" data-i18n-title="copy-title">
+              <span id="copy-text" data-i18n="copy">Sao chép</span>
             </button>
           </div>
           <p id="result-text" class="result-text"></p>
@@ -164,9 +161,9 @@
       <section class="card usage-card" aria-labelledby="usage-title">
         <details>
           <summary class="card-head">
-            <h2 id="usage-title">Hướng dẫn cài đặt & tích hợp</h2>
+          <h2 id="usage-title" data-i18n="usage-title">Hướng dẫn cài đặt & tích hợp</h2>
           </summary>
-          <nav id="usage-tabs" class="tabs" role="tablist" aria-label="Khung làm việc"></nav>
+          <nav id="usage-tabs" class="tabs" role="tablist" aria-label="Khung làm việc" data-i18n-aria-label="frameworks"></nav>
           <p id="usage-desc" class="usage-desc"></p>
 
           <div id="steps-container" class="steps-container"></div>
@@ -176,31 +173,31 @@
       <!-- SECTION 3: MASTER DATA CUSTOMIZATION -->
       <section class="card" aria-labelledby="master-title">
         <div class="card-head">
-          <h2 id="master-title">Cấu hình Master Data tiền tệ (API)</h2>
+          <h2 id="master-title" data-i18n="master-title">Cấu hình Master Data tiền tệ (API)</h2>
           <div class="head-actions">
-            <button id="add-currency-btn" type="button" class="ghost-btn small">+ Thêm mã</button>
-            <button id="export-btn" type="button" class="ghost-btn small">Sao chép TS code</button>
-            <button id="reset-btn" type="button" class="ghost-btn small">Khôi phục mặc định</button>
+            <button id="add-currency-btn" type="button" class="ghost-btn small" data-i18n="add-currency">+ Thêm mã</button>
+            <button id="export-btn" type="button" class="ghost-btn small" data-i18n="copy-ts">Sao chép TS code</button>
+            <button id="reset-btn" type="button" class="ghost-btn small" data-i18n="reset">Khôi phục mặc định</button>
           </div>
         </div>
-        <p class="hint">Cấu hình tiền tệ active.</p>
+        <p class="hint" id="master-hint">Cấu hình tiền tệ active.</p>
         <div class="table-wrap">
           <table class="master">
             <thead>
               <tr>
-                <th>Mã</th>
-                <th>Tên VI</th>
-                <th>Tên EN (Ít)</th>
-                <th>Tên EN (Nhiều)</th>
-                <th>Xử lý lẻ</th>
-                <th>Scale</th>
-                <th>Dấu thập phân</th>
-                <th>Đọc lẻ</th>
-                <th>Lẻ VI ít</th>
-                <th>Lẻ VI nhiều</th>
-                <th>Lẻ EN ít</th>
-                <th>Lẻ EN nhiều</th>
-                <th>Active</th>
+                <th data-i18n="col-code">Mã</th>
+                <th data-i18n="col-name-vi">Tên VI</th>
+                <th data-i18n="col-name-en-singular">Tên EN (Ít)</th>
+                <th data-i18n="col-name-en-plural">Tên EN (Nhiều)</th>
+                <th data-i18n="col-decimal-handling">Xử lý lẻ</th>
+                <th data-i18n="col-scale">Scale</th>
+                <th data-i18n="col-decimal-separator">Dấu thập phân</th>
+                <th data-i18n="col-read-decimal">Đọc lẻ</th>
+                <th data-i18n="col-minor-vi-singular">Lẻ VI ít</th>
+                <th data-i18n="col-minor-vi-plural">Lẻ VI nhiều</th>
+                <th data-i18n="col-minor-en-singular">Lẻ EN ít</th>
+                <th data-i18n="col-minor-en-plural">Lẻ EN nhiều</th>
+                <th data-i18n="col-active">Active</th>
                 <th></th>
               </tr>
             </thead>
@@ -212,8 +209,8 @@
 
     <footer class="footer">
       <p>
-        <strong>n2cur</strong> v1.1.0 · Phát triển bởi <a href="https://github.com/dongtrieuit" target="_blank" rel="noopener">dongtrieuit</a> ·
-        Mã nguồn trên <a href="https://github.com/dongtrieuit/n2cur.git" target="_blank" rel="noopener">GitHub</a> (MIT License).
+        <strong>n2cur</strong> v1.1.0 · <span id="footer-copy">Phát triển bởi</span> <a href="https://github.com/dongtrieuit" target="_blank" rel="noopener">dongtrieuit</a> ·
+        <span id="footer-source">Mã nguồn trên</span> <a href="https://github.com/dongtrieuit/n2cur.git" target="_blank" rel="noopener">GitHub</a> (<span id="footer-license">MIT License</span>).
       </p>
     </footer>
 
