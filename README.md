@@ -1,11 +1,11 @@
 # n2cur
 
 <p align="center">
-  <img src="./assets/og-image.png" alt="n2cur - Đọc số tiền thành chữ tiếng Việt" width="100%" />
+  <img src="./assets/og-image.png" alt="n2cur - Đọc số tiền thành chữ tiếng Việt & Tiếng Anh" width="100%" />
 </p>
 
 <p align="center">
-  <strong>Thư viện JavaScript / TypeScript đọc số tiền thành chữ tiếng Việt chuẩn xác 100%</strong><br>
+  <strong>Thư viện JavaScript / TypeScript đọc số tiền thành chữ tiếng Việt &amp; Tiếng Anh chuẩn xác 100%</strong><br>
   Hỗ trợ <strong>React</strong>, <strong>Angular</strong>, <strong>Vue 3</strong>, <strong>Vanilla JS / Node.js</strong> và nhúng <strong>CDN</strong>.
 </p>
 
@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  <a href="https://n2cur.dts.io.vn/" target="_blank"><strong>🌐 Website Demo Dùng Thử Trực Tuyến: https://n2cur.dts.io.vn/</strong></a>
+  <a href="https://n2cur.dts.io.vn/" target="_blank"><strong>Website Demo Dùng Thử Trực Tuyến: https://n2cur.dts.io.vn/</strong></a>
 </p>
 
 > Đang làm tính năng hóa đơn/thanh toán mà đau đầu vụ đọc số tiền thành chữ? Thôi đừng tự code lại nữa mấy bác! Bộ quy tắc trong n2cur đã được tối ưu qua vô số vòng nghiệm thu khó tính từ BU ngân hàng. Cài 1 dòng `npm i n2cur` là xong ngay!
@@ -26,8 +26,10 @@
 
 ## Tính năng nổi bật
 
-- **Siêu nhẹ & Zero-Dependency**: Chỉ ~11 KB không phụ thuộc bất kỳ thư viện bên thứ ba nào.
-- **Chính xác 100% tiếng Việt**: Đọc chuẩn các quy tắc `"không trăm"`, `"linh/lẻ"`, `"mốt/tư/lăm"`, chu kỳ `"tỷ tỷ"` lặp lại.
+- **Siêu nhẹ & Zero-Dependency**: Chỉ ~12 KB không phụ thuộc bất kỳ thư viện bên thứ ba nào.
+- **Chính xác 100% tiếng Việt & Tiếng Anh (`lang: 'en'`)**:
+  - Tiếng Việt: Đọc chuẩn các quy tắc `"không trăm"`, `"linh/lẻ"`, `"mốt/tư/lăm"`, chu kỳ `"tỷ tỷ"` lặp lại.
+  - Tiếng Anh (`lang: 'en'`): Đọc chuẩn theo US Short Scale (`hundred`, `thousand`, `million`, `billion`... lên tới `decillion` $10^{33}$), tự động số ít/số nhiều (`US dollar`/`US dollars`, `cent`/`cents`, `penny`/`pence`).
 - **Master Data API Linh hoạt**: Nạp và tùy biến danh mục tiền tệ (VND, USD, EUR, GBP, JPY, SGD...) động từ Backend API.
 - **An toàn kiểu dữ liệu (Type-Safe)**: Hỗ trợ TypeScript type-defs đầy đủ, xử lý `BigInt` và số thực cực lớn mà không mất độ chính xác.
 - **Đa nền tảng**: Hoạt động mượt mà trên React, Angular, Vue 3, Next.js, Nuxt, Node.js và trình duyệt qua CDN.
@@ -52,13 +54,14 @@ npm install n2cur
 import { useMemo } from 'react';
 import { createMoneyReader, type CurrencyConfig } from 'n2cur';
 
-export function AmountInWords({ amount, currency = 'VND', currencies }: {
+export function AmountInWords({ amount, currency = 'VND', lang = 'vi', currencies }: {
   amount: string | number;
   currency?: string;
+  lang?: 'vi' | 'en';
   currencies?: CurrencyConfig[];
 }) {
   const reader = useMemo(() => createMoneyReader({ currencies }), [currencies]);
-  const res = reader.safeRead(amount, currency);
+  const res = reader.safeRead(amount, currency, { lang });
 
   if (!res.ok) return <span className="error">{res.error.message}</span>;
   return <span>{res.text}</span>;
@@ -70,7 +73,12 @@ export function AmountInWords({ amount, currency = 'VND', currencies }: {
 import { AmountInWords } from './AmountInWords';
 
 export default function App() {
-  return <p>Tổng tiền: <AmountInWords amount="1005001" currency="VND" /></p>;
+  return (
+    <div>
+      <p>Tiếng Việt: <AmountInWords amount="1005001" currency="VND" /></p>
+      <p>English: <AmountInWords amount="105.50" currency="USD" lang="en" /></p>
+    </div>
+  );
 }
 ```
 
@@ -96,16 +104,16 @@ npm install n2cur
 #### Bước 2: Tạo Standalone Pipe (`money-words.pipe.ts`)
 ```ts
 import { Pipe, PipeTransform } from '@angular/core';
-import { safeReadMoney } from 'n2cur';
+import { safeReadMoney, type Lang } from 'n2cur';
 
 @Pipe({
   name: 'moneyWords',
   standalone: true
 })
 export class MoneyWordsPipe implements PipeTransform {
-  transform(amount: string | number | null | undefined, currency = 'VND'): string {
+  transform(amount: string | number | null | undefined, currency = 'VND', lang: Lang = 'vi'): string {
     if (amount === null || amount === undefined || amount === '') return '';
-    const res = safeReadMoney(amount, currency);
+    const res = safeReadMoney(amount, currency, { lang });
     return res.ok ? res.text : '';
   }
 }
@@ -113,7 +121,8 @@ export class MoneyWordsPipe implements PipeTransform {
 
 #### Bước 3: Sử dụng trong HTML Template
 ```html
-<p>Thành tiền: {{ totalAmount | moneyWords:'VND' }}</p>
+<p>Thành tiền (VI): {{ totalAmount | moneyWords:'VND':'vi' }}</p>
+<p>Total (EN): {{ totalAmount | moneyWords:'USD':'en' }}</p>
 ```
 
 ---
@@ -133,15 +142,19 @@ npm install n2cur
 ```vue
 <script setup lang="ts">
 import { computed } from 'vue';
-import { safeReadMoney } from 'n2cur';
+import { safeReadMoney, type Lang } from 'n2cur';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   amount: string | number;
   currency?: string;
-}>();
+  lang?: Lang;
+}>(), {
+  currency: 'VND',
+  lang: 'vi',
+});
 
 const text = computed(() => {
-  const res = safeReadMoney(props.amount, props.currency || 'VND');
+  const res = safeReadMoney(props.amount, props.currency, { lang: props.lang });
   return res.ok ? res.text : res.error.message;
 });
 </script>
@@ -164,19 +177,26 @@ const text = computed(() => {
 npm install n2cur
 ```
 
-#### Bước 2: Đọc số tiền trực tiếp
+#### Bước 2: Đọc số tiền trực tiếp (Tiếng Việt & Tiếng Anh)
 ```ts
 import { readMoney, safeReadMoney } from 'n2cur';
 
-// Đọc nhanh số tiền mặc định (VND, USD, EUR, GBP, JPY, SGD)
+// 1. Đọc Tiếng Việt (mặc định)
 console.log(readMoney(1005001, 'VND')); 
 // -> "Một triệu không trăm linh năm nghìn không trăm lẻ một đồng"
 
 console.log(readMoney('12.02', 'GBP'));  
 // -> "Mười hai bảng Anh và hai pence"
 
+// 2. Đọc Tiếng Anh (English reading support)
+console.log(readMoney(105.50, 'USD', { lang: 'en' }));
+// -> "One hundred five US dollars and fifty cents"
+
+console.log(readMoney('12.01', 'GBP', { lang: 'en' }));
+// -> "Twelve pounds and one penny"
+
 // Safe read không ném Exception khi nhập dữ liệu lỗi
-const res = safeReadMoney(100, 'USD');
+const res = safeReadMoney(100, 'USD', { lang: 'en' });
 if (res.ok) console.log(res.text);
 ```
 
@@ -204,8 +224,13 @@ readMoney('1.005.001,25', 'USD', { decimalSeparator: ',' });
 #### Bước 2: Sử dụng qua biến toàn cục `window.N2Cur`
 ```html
 <script>
-  const text = N2Cur.readMoney(1005001, 'VND');
-  document.getElementById('total-words').textContent = text;
+  // Đọc Tiếng Việt
+  const viText = N2Cur.readMoney(1005001, 'VND');
+  document.getElementById('total-vi').textContent = viText;
+
+  // Đọc Tiếng Anh
+  const enText = N2Cur.readMoney(105.50, 'USD', { lang: 'en' });
+  document.getElementById('total-en').textContent = enText;
 </script>
 ```
 
@@ -216,12 +241,16 @@ readMoney('1.005.001,25', 'USD', { decimalSeparator: ',' });
 | Trường | Kiểu dữ liệu | Mô tả chi tiết |
 | :--- | :--- | :--- |
 | `currency_code` | `string` | Mã tiền tệ chuẩn ISO 4217 (`VND`, `USD`, `EUR`...) |
-| `currency_name` | `string` | Tên đơn vị chính (`đồng`, `đô la Mỹ`, `bảng Anh`...) |
+| `currency_name` | `string` | Tên đơn vị chính bằng tiếng Việt (`đồng`, `đô la Mỹ`, `bảng Anh`...) |
+| `currency_name_en` | `string?` | Tên đơn vị chính số ít bằng Tiếng Anh (`US dollar`, `pound`, `euro`...) |
+| `currency_name_en_plural` | `string?` | Tên đơn vị chính số nhiều bằng Tiếng Anh (`US dollars`, `pounds`...) |
 | `decimal_handling` | `'READ' \| 'IGNORE' \| 'REJECT'` | Cách xử lý phần lẻ (`READ`: đọc lẻ, `IGNORE`: bỏ qua, `REJECT`: từ chối) |
 | `decimal_scale` | `number` | Số chữ số tối đa phần lẻ (vd: 2 chữ số cent) |
 | `decimal_allowed` | `boolean` | Cho phép đọc phần lẻ ra chữ hay không |
-| `minor_unit_singular` | `string` | Đơn vị lẻ số ít (`cent`, `penny`...) |
-| `minor_unit_plural` | `string` | Đơn vị lẻ số nhiều (`cents`, `pence`...) |
+| `minor_unit_singular` | `string?` | Đơn vị lẻ số ít tiếng Việt (`cent`, `penny`...) |
+| `minor_unit_plural` | `string?` | Đơn vị lẻ số nhiều tiếng Việt (`cents`, `pence`...) |
+| `minor_unit_singular_en` | `string?` | Đơn vị lẻ số ít Tiếng Anh (`cent`, `penny`...) |
+| `minor_unit_plural_en` | `string?` | Đơn vị lẻ số nhiều Tiếng Anh (`cents`, `pence`...) |
 | `active` | `boolean` | Trạng thái kích hoạt (`true` mới có hiệu lực) |
 
 ---
@@ -229,13 +258,13 @@ readMoney('1.005.001,25', 'USD', { decimalSeparator: ',' });
 ## API Reference
 
 ### 1. `readMoney(amount, currencyCode, options?)`
-Đọc số tiền và trả về chuỗi kết quả tiếng Việt. Ném lỗi `MoneyReaderError` nếu tiền tệ không hợp lệ.
+Đọc số tiền và trả về chuỗi kết quả. `options.lang` nhận `'vi'` (mặc định) hoặc `'en'`. Ném lỗi `MoneyReaderError` nếu dữ liệu hoặc tiền tệ không hợp lệ.
 
 ### 2. `safeReadMoney(amount, currencyCode, options?)`
 Đọc số tiền an toàn. Trả về `{ ok: true, text }` hoặc `{ ok: false, error }`.
 
-### 3. `createMoneyReader({ currencies })`
-Tạo instance đọc tiền với danh mục Master Data riêng từ API.
+### 3. `createMoneyReader({ currencies, lang? })`
+Tạo instance đọc tiền với danh mục Master Data riêng từ API và thiết lập ngôn ngữ mặc định.
 
 ---
 
@@ -244,3 +273,4 @@ Tạo instance đọc tiền với danh mục Master Data riêng từ API.
 Phát triển bởi **[dongtrieuit](https://github.com/dongtrieuit)**.
 
 Mã nguồn mở cấp phép theo giấy phép [MIT License](LICENSE). Repository chính thức: [https://github.com/dongtrieuit/n2cur.git](https://github.com/dongtrieuit/n2cur.git).
+

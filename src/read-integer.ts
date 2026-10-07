@@ -5,6 +5,9 @@
 const DIGITS = ['không', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'] as const;
 const BASE_SCALES = ['', 'nghìn', 'triệu'] as const;
 
+import { readDigitsEn } from './read-integer-en';
+import type { Lang } from './types';
+
 export interface ReadIntegerOptions {
   /**
    * Áp dụng quy tắc riêng của VND:
@@ -12,6 +15,8 @@ export interface ReadIntegerOptions {
    * - "lẻ" thay cho "linh" ở nhóm đơn vị tận cùng bên phải (105 → một trăm lẻ năm).
    */
   vndStyle?: boolean;
+  /** Ngôn ngữ đầu ra. Mặc định `'vi'`. */
+  lang?: Lang;
 }
 
 const digit = (n: number): string => DIGITS[n] as string;
@@ -103,15 +108,23 @@ export function readDigitsVi(digits: string, options: ReadIntegerOptions = {}): 
 export function readInteger(value: number | bigint | string, options: ReadIntegerOptions = {}): string {
   let digits: string;
   if (typeof value === 'bigint') {
-    if (value < 0n) throw new RangeError('Không hỗ trợ số âm');
+    if (value < 0n) throw new RangeError(options.lang === 'en' ? 'Negative numbers are not supported' : 'Không hỗ trợ số âm');
     digits = value.toString();
   } else if (typeof value === 'number') {
     if (!Number.isSafeInteger(value) || value < 0) {
-      throw new RangeError('Giá trị number phải là số nguyên không âm an toàn; dùng bigint/string cho số lớn');
+      throw new RangeError(
+        options.lang === 'en'
+          ? 'Number value must be a non-negative safe integer; use bigint/string for large numbers'
+          : 'Giá trị number phải là số nguyên không âm an toàn; dùng bigint/string cho số lớn',
+      );
     }
     digits = String(value);
   } else {
     digits = value.trim();
+  }
+
+  if (options.lang === 'en') {
+    return readDigitsEn(digits);
   }
   return readDigitsVi(digits, options);
 }

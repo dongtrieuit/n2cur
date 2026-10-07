@@ -1,7 +1,7 @@
 {
   "name": "n2cur",
-  "version": "1.0.0",
-  "description": "Thư viện đọc số tiền thành chữ tiếng Việt (VND, USD, EUR, GBP, JPY, SGD...) hỗ trợ Master Data cho Frontend.",
+  "version": "1.1.0",
+  "description": "Thư viện đọc số tiền thành chữ tiếng Việt & tiếng Anh (VND, USD, EUR, GBP, JPY, SGD...) hỗ trợ Master Data cho Frontend.",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -43,16 +43,20 @@
   "keywords": [
     "n2cur",
     "vietnamese",
+    "english",
     "number-to-words",
     "money",
     "currency",
     "doc-so-tien",
     "doc-so-thanh-chu",
     "vnd",
+    "usd",
+    "eur",
     "react",
     "angular",
     "vue"
   ],
+
   "author": "dongtrieuit",
   "license": "MIT",
   "bugs": {

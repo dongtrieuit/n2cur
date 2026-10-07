@@ -39,6 +39,7 @@ const cloneDefaults = (): CurrencyConfig[] => DEFAULT_CURRENCIES.map((c) => ({ .
 
 let currencies: CurrencyConfig[] = cloneDefaults();
 let reader: MoneyReader = createMoneyReader({ currencies });
+let currentLang: 'vi' | 'en' = 'vi';
 let decimalSeparator: NonNullable<ReadOptions['decimalSeparator']> = '.';
 let activeSnippetId = 'react';
 
@@ -58,7 +59,12 @@ function renderCurrencyOptions(): void {
     const config = reader.getCurrency(code);
     const opt = document.createElement('option');
     opt.value = code;
-    opt.textContent = config ? `${code} · ${config.currency_name}` : `${code} · (inactive)`;
+    if (config) {
+      const displayName = currentLang === 'en' ? (config.currency_name_en ?? config.currency_name) : config.currency_name;
+      opt.textContent = `${code} · ${displayName}`;
+    } else {
+      opt.textContent = `${code} · (inactive)`;
+    }
     currencySelect.append(opt);
   }
   currencySelect.value = codes.includes(previous) ? previous : (codes[0] ?? '');
@@ -67,7 +73,7 @@ function renderCurrencyOptions(): void {
 function renderResult(): void {
   const amountStr = amountInput.value.trim();
   const codeStr = currencySelect.value;
-  const res = reader.safeRead(amountStr, codeStr, { decimalSeparator });
+  const res = reader.safeRead(amountStr, codeStr, { lang: currentLang, decimalSeparator });
 
   resultText.classList.remove('flash');
   void resultText.offsetWidth;
@@ -75,13 +81,13 @@ function renderResult(): void {
 
   if (res.ok) {
     resultBox.classList.remove('error');
-    resultLabel.textContent = 'Kết quả';
+    resultLabel.textContent = currentLang === 'en' ? 'Result' : 'Kết quả';
     resultText.textContent = res.text;
     resultCode.textContent = '';
     copyBtn.hidden = false;
   } else {
     resultBox.classList.add('error');
-    resultLabel.textContent = ERROR_LABELS[res.error.code] ?? 'Lỗi';
+    resultLabel.textContent = ERROR_LABELS[res.error.code] ?? (currentLang === 'en' ? 'Error' : 'Lỗi');
     resultText.textContent = res.error.message;
     resultCode.textContent = res.error.code;
     copyBtn.hidden = true;
@@ -221,7 +227,12 @@ function renderMasterTable(): void {
     const tr = document.createElement('tr');
     tr.classList.toggle('inactive', !row.active);
 
-    tr.append(textCell(row, 'currency_code', 'code'), textCell(row, 'currency_name', 'name'));
+    tr.append(
+      textCell(row, 'currency_code', 'code'),
+      textCell(row, 'currency_name', 'name'),
+      textCell(row, 'currency_name_en', 'name'),
+      textCell(row, 'currency_name_en_plural', 'name'),
+    );
 
     const handlingTd = document.createElement('td');
     const select = document.createElement('select');
@@ -268,6 +279,8 @@ function renderMasterTable(): void {
       switchCell(row, 'decimal_allowed'),
       textCell(row, 'minor_unit_singular'),
       textCell(row, 'minor_unit_plural'),
+      textCell(row, 'minor_unit_singular_en'),
+      textCell(row, 'minor_unit_plural_en'),
       switchCell(row, 'active', tr),
       removeTd,
     );
@@ -283,24 +296,42 @@ function refreshAll(): void {
 
 /* ---------------- Controls ---------------- */
 
+function setLang(lang: 'vi' | 'en'): void {
+  currentLang = lang;
+  document.querySelectorAll<HTMLButtonElement>('.lang-seg').forEach((b) => {
+    const active = b.dataset.lang === lang;
+    b.classList.toggle('active', active);
+    b.setAttribute('aria-checked', String(active));
+  });
+  renderCurrencyOptions();
+  renderResult();
+}
+
 function setSeparator(sep: '.' | ','): void {
   decimalSeparator = sep;
-  document.querySelectorAll<HTMLButtonElement>('.seg').forEach((b) => {
+  document.querySelectorAll<HTMLButtonElement>('.sep-seg').forEach((b) => {
     const active = b.dataset.sep === sep;
     b.classList.toggle('active', active);
     b.setAttribute('aria-checked', String(active));
   });
+  renderResult();
 }
 
-document.querySelectorAll<HTMLButtonElement>('.seg').forEach((btn) =>
+document.querySelectorAll<HTMLButtonElement>('.lang-seg').forEach((btn) =>
+  btn.addEventListener('click', () => {
+    setLang(btn.dataset.lang as 'vi' | 'en');
+  }),
+);
+
+document.querySelectorAll<HTMLButtonElement>('.sep-seg').forEach((btn) =>
   btn.addEventListener('click', () => {
     setSeparator(btn.dataset.sep as '.' | ',');
-    renderResult();
   }),
 );
 
 amountInput.addEventListener('input', renderResult);
 currencySelect.addEventListener('change', renderResult);
+
 
 copyBtn.addEventListener('click', async () => {
   try {

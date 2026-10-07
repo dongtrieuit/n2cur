@@ -198,3 +198,60 @@ describe('safeReadMoney', () => {
     if (!res.ok) expect(res.error.code).toBe('CURRENCY_NOT_FOUND');
   });
 });
+
+describe('readMoney – Tiếng Anh (lang: "en")', () => {
+  it.each<[number | string, string, string]>([
+    [1, 'USD', 'One US dollar'],
+    [2, 'USD', 'Two US dollars'],
+    [105.01, 'USD', 'One hundred five US dollars and one cent'],
+    [105.50, 'USD', 'One hundred five US dollars and fifty cents'],
+    [1, 'GBP', 'One pound'],
+    [12.01, 'GBP', 'Twelve pounds and one penny'],
+    [12.02, 'GBP', 'Twelve pounds and two pence'],
+    [1, 'EUR', 'One euro'],
+    [100, 'EUR', 'One hundred euros'],
+    [12.75, 'JPY', 'Twelve yen'],
+    [1000, 'VND', 'One thousand dong'],
+    [1, 'SGD', 'One Singapore dollar'],
+    [5, 'SGD', 'Five Singapore dollars'],
+  ])('%s %s (en) → %s', (amount, code, text) => {
+    expect(readMoney(amount, code, { lang: 'en' })).toBe(text);
+  });
+
+  it('custom Master Data fallback khi thiếu tên Tiếng Anh', () => {
+    const reader = createMoneyReader({
+      currencies: [
+        {
+          currency_code: 'MYR',
+          currency_name: 'ringgit Malaysia',
+          decimal_handling: 'READ',
+          decimal_scale: 2,
+          decimal_allowed: true,
+          minor_unit_singular: 'sen',
+          minor_unit_plural: 'sen',
+          active: true,
+        },
+      ],
+    });
+    expect(reader.read(100, 'MYR', { lang: 'en' })).toBe('One hundred MYR');
+    expect(reader.read('100.50', 'MYR', { lang: 'en' })).toBe('One hundred MYR and fifty sen');
+  });
+
+  it('localized error messages khi lang: "en"', () => {
+    const res = safeReadMoney(1, 'XYZ', { lang: 'en' });
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.error.code).toBe('CURRENCY_NOT_FOUND');
+      expect(res.error.message).toContain('No active currency configuration found for code "XYZ"');
+    }
+
+    const resInvalid = safeReadMoney(-10, 'USD', { lang: 'en' });
+    expect(resInvalid.ok).toBe(false);
+    if (!resInvalid.ok) {
+      expect(resInvalid.error.code).toBe('INVALID_AMOUNT');
+      expect(resInvalid.error.message).toContain('negative amounts are not supported');
+    }
+  });
+});
+
+

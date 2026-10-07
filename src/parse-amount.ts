@@ -1,5 +1,6 @@
 import { MoneyReaderError } from './errors';
-import type { AmountInput, ReadOptions } from './types';
+import { messages } from './messages';
+import type { AmountInput, Lang, ReadOptions } from './types';
 
 export interface ParsedAmount {
   /** Phần nguyên dạng chuỗi chữ số, không có số 0 thừa ở đầu ("0" nếu bằng 0). */
@@ -8,8 +9,8 @@ export interface ParsedAmount {
   fraction: string;
 }
 
-const invalid = (input: unknown, reason: string): MoneyReaderError =>
-  new MoneyReaderError('INVALID_AMOUNT', `Số tiền không hợp lệ: ${reason}`, { input: String(input) });
+const invalid = (input: unknown, lang: Lang, reason: string): MoneyReaderError =>
+  new MoneyReaderError('INVALID_AMOUNT', messages.invalidAmount(lang, reason), { input: String(input) });
 
 /** Chuyển chuỗi số dạng mũ ("1.5e+21", "1e-7") thành dạng thập phân thường. */
 function expandExponent(str: string): string {
@@ -37,29 +38,31 @@ function normalizeParts(integer: string, fraction: string): ParsedAmount {
  * Thao tác hoàn toàn trên chuỗi để tránh sai số dấu phẩy động và hỗ trợ số rất lớn.
  */
 export function parseAmount(input: AmountInput, options: ReadOptions = {}): ParsedAmount {
+  const lang: Lang = options.lang === 'en' ? 'en' : 'vi';
+
   if (typeof input === 'bigint') {
-    if (input < 0n) throw invalid(input, 'không hỗ trợ số âm');
+    if (input < 0n) throw invalid(input, lang, messages.reasonNegative(lang));
     return normalizeParts(input.toString(), '');
   }
 
   if (typeof input === 'number') {
-    if (!Number.isFinite(input)) throw invalid(input, 'phải là số hữu hạn');
-    if (input < 0) throw invalid(input, 'không hỗ trợ số âm');
+    if (!Number.isFinite(input)) throw invalid(input, lang, messages.reasonNotFinite(lang));
+    if (input < 0) throw invalid(input, lang, messages.reasonNegative(lang));
     const [i = '0', f = ''] = expandExponent(String(Math.abs(input))).split('.');
     return normalizeParts(i, f);
   }
 
-  if (typeof input !== 'string') throw invalid(input, 'phải là number, bigint hoặc string');
+  if (typeof input !== 'string') throw invalid(input, lang, messages.reasonBadType(lang));
 
   const decimalSeparator = options.decimalSeparator ?? '.';
   if (decimalSeparator !== '.' && decimalSeparator !== ',') {
-    throw new MoneyReaderError('INVALID_CONFIG', `decimalSeparator không hợp lệ: ${String(decimalSeparator)}`);
+    throw new MoneyReaderError('INVALID_CONFIG', messages.invalidDecimalSeparator(lang, String(decimalSeparator)));
   }
   const groupSeparator = decimalSeparator === '.' ? ',' : '.';
 
   let str = input.replace(/\s+/g, '');
   if (str.startsWith('+')) str = str.slice(1);
-  if (str.startsWith('-')) throw invalid(input, 'không hỗ trợ số âm');
+  if (str.startsWith('-')) throw invalid(input, lang, messages.reasonNegative(lang));
 
   const g = `\\${groupSeparator}`;
   const d = `\\${decimalSeparator}`;
@@ -69,7 +72,7 @@ export function parseAmount(input: AmountInput, options: ReadOptions = {}): Pars
   const intRaw = match?.[1] ?? '';
   const fracRaw = match?.[2] ?? '';
   if (!match || (intRaw === '' && fracRaw === '')) {
-    throw invalid(input, 'định dạng không đúng');
+    throw invalid(input, lang, messages.reasonBadFormat(lang));
   }
 
   return normalizeParts(intRaw.split(groupSeparator).join('') || '0', fracRaw);

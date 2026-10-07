@@ -91,7 +91,7 @@
       <a href="https://n2cur.dts.io.vn/" class="brand" title="n2cur Trang chủ Demo Website">
         <span class="brand-logo">₫</span>
         <span class="brand-name">n2cur</span>
-        <span class="brand-tag">v1.0.0</span>
+        <span class="brand-tag">v1.1.0</span>
       </a>
       <div class="top-actions">
         <a href="https://www.npmjs.com/package/n2cur" target="_blank" rel="noopener" class="repo-link" title="n2cur trên npm registry">
@@ -114,10 +114,11 @@
         <div class="hero-badges">
           <span class="badge primary">TypeScript</span>
           <span class="badge">MIT License</span>
+          <span class="badge primary">v1.1.0 (VI & EN)</span>
         </div>
-        <h1>Đọc số tiền <span class="grad">thành chữ</span> tiếng Việt</h1>
+        <h1>Đọc số tiền <span class="grad">thành chữ</span> tiếng Việt &amp; Tiếng Anh</h1>
         <p class="subtitle">
-          Thư viện JavaScript đọc số tiền thành chữ tiếng Việt (VND, USD, EUR) cho React, Angular, Vue.
+          Thư viện JavaScript đọc số tiền thành chữ tiếng Việt &amp; Tiếng Anh (VND, USD, EUR, GBP, JPY, SGD) cho React, Angular, Vue, Node.js &amp; CDN.
         </p>
         <blockquote class="dev-intro-quote">
           Đang làm tính năng hóa đơn/thanh toán mà đau đầu vụ đọc số tiền thành chữ? Thôi đừng tự code lại nữa mấy bác! Bộ quy tắc trong n2cur đã được tối ưu qua vô số vòng nghiệm thu khó tính từ BU ngân hàng. Cài 1 dòng <code>npm i n2cur</code> là xong ngay!
@@ -139,10 +140,17 @@
             <select id="currency-select"></select>
           </label>
           <div class="field">
+            <span class="field-label">Ngôn ngữ (Language)</span>
+            <div class="segmented" role="radiogroup" aria-label="Ngôn ngữ">
+              <button id="lang-vi" type="button" class="seg lang-seg active" data-lang="vi">Tiếng Việt</button>
+              <button id="lang-en" type="button" class="seg lang-seg" data-lang="en">English</button>
+            </div>
+          </div>
+          <div class="field">
             <span class="field-label">Dấu thập phân</span>
             <div class="segmented" role="radiogroup" aria-label="Dấu thập phân">
-              <button id="sep-dot" type="button" class="seg active" data-sep=".">1,234.56</button>
-              <button id="sep-comma" type="button" class="seg" data-sep=",">1.234,56</button>
+              <button id="sep-dot" type="button" class="seg sep-seg active" data-sep=".">1,234.56</button>
+              <button id="sep-comma" type="button" class="seg sep-seg" data-sep=",">1.234,56</button>
             </div>
           </div>
         </div>
@@ -186,12 +194,16 @@
             <thead>
               <tr>
                 <th>Mã</th>
-                <th>Tên đơn vị chính</th>
+                <th>Tên VI</th>
+                <th>Tên EN (Ít)</th>
+                <th>Tên EN (Nhiều)</th>
                 <th>Xử lý lẻ</th>
                 <th>Scale</th>
                 <th>Đọc lẻ</th>
-                <th>Lẻ số ít</th>
-                <th>Lẻ số nhiều</th>
+                <th>Lẻ VI ít</th>
+                <th>Lẻ VI nhiều</th>
+                <th>Lẻ EN ít</th>
+                <th>Lẻ EN nhiều</th>
                 <th>Active</th>
                 <th></th>
               </tr>
@@ -204,10 +216,11 @@
 
     <footer class="footer">
       <p>
-        <strong>n2cur</strong> v1.0.0 · Phát triển bởi <a href="https://github.com/dongtrieuit" target="_blank" rel="noopener">dongtrieuit</a> ·
+        <strong>n2cur</strong> v1.1.0 · Phát triển bởi <a href="https://github.com/dongtrieuit" target="_blank" rel="noopener">dongtrieuit</a> ·
         Mã nguồn trên <a href="https://github.com/dongtrieuit/n2cur.git" target="_blank" rel="noopener">GitHub</a> (MIT License).
       </p>
     </footer>
+
 
     <script type="module" src="./main.ts"></script>
   </body>

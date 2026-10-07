@@ -1,8 +1,10 @@
 import { DEFAULT_CURRENCIES } from './currencies';
 import { MoneyReaderError } from './errors';
+import { messages } from './messages';
 import { parseAmount } from './parse-amount';
 import { readDigitsVi } from './read-integer';
-import type { AmountInput, CurrencyConfig, MoneyReaderOptions, ReadOptions } from './types';
+import { EN_MAX_DIGITS, readDigitsEn } from './read-integer-en';
+import type { AmountInput, CurrencyConfig, Lang, MoneyReaderOptions, ReadOptions } from './types';
 
 const DECIMAL_HANDLINGS = ['READ', 'IGNORE', 'REJECT'] as const;
 const VND = 'VND';
@@ -29,16 +31,16 @@ export function normalizeCurrencyCode(code: unknown): string {
 
 const isBlank = (s: string | null | undefined): boolean => !s || !s.trim();
 
-function validateCurrency(c: CurrencyConfig): void {
+function validateCurrency(c: CurrencyConfig, lang: Lang): void {
   const code = normalizeCurrencyCode(c.currency_code);
   const fail = (msg: string) => {
-    throw new MoneyReaderError('INVALID_CONFIG', `Cấu hình tiền tệ ${code} không hợp lệ: ${msg}`, { currency_code: code });
+    throw new MoneyReaderError('INVALID_CONFIG', messages.invalidConfig(lang, code, msg), { currency_code: code });
   };
-  if (isBlank(c.currency_name)) fail('thiếu currency_name');
+  if (isBlank(c.currency_name)) fail(messages.detailMissingName(lang));
   if (!(DECIMAL_HANDLINGS as readonly string[]).includes(c.decimal_handling)) {
-    fail(`decimal_handling phải là ${DECIMAL_HANDLINGS.join(' / ')}`);
+    fail(messages.detailBadHandling(lang, DECIMAL_HANDLINGS.join(' / ')));
   }
-  if (!Number.isInteger(c.decimal_scale) || c.decimal_scale < 0) fail('decimal_scale phải là số nguyên ≥ 0');
+  if (!Number.isInteger(c.decimal_scale) || c.decimal_scale < 0) fail(messages.detailBadScale(lang));
   if (
     c.decimal_handling === 'READ' &&
     c.decimal_allowed &&
@@ -46,7 +48,7 @@ function validateCurrency(c: CurrencyConfig): void {
   ) {
     throw new MoneyReaderError(
       'MINOR_UNIT_MISSING',
-      `Tiền tệ ${code} dùng chế độ READ nhưng chưa khai báo đủ đơn vị lẻ số ít/số nhiều`,
+      messages.minorUnitMissing(lang, code),
       { currency_code: code },
     );
   }
@@ -56,16 +58,41 @@ function capitalizeFirst(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
+function resolveMainUnitName(c: CurrencyConfig, integer: string, lang: Lang): string {
+  if (lang === 'vi') return c.currency_name.trim();
+  const isOne = integer === '1';
+  if (isOne) {
+    return (c.currency_name_en ?? c.currency_code).trim();
+  }
+  return (c.currency_name_en_plural ?? c.currency_name_en ?? c.currency_code).trim();
+}
+
+function resolveMinorUnitName(c: CurrencyConfig, minorDigits: string, lang: Lang): string {
+  const isOne = minorDigits === '1';
+  if (lang === 'vi') {
+    const unit = isOne ? c.minor_unit_singular : c.minor_unit_plural;
+    return String(unit ?? '').trim();
+  }
+  if (isOne) {
+    const unit = c.minor_unit_singular_en ?? c.minor_unit_singular;
+    return String(unit ?? '').trim();
+  }
+  const unit = c.minor_unit_plural_en ?? c.minor_unit_singular_en ?? c.minor_unit_plural;
+  return String(unit ?? '').trim();
+}
+
 /**
  * Tạo bộ đọc số tiền với danh mục tiền tệ tùy biến (vd nạp từ API Master Data).
  * @example
  * const reader = createMoneyReader({ currencies: await api.getCurrencies() });
  * reader.read('12.02', 'GBP'); // "Mười hai bảng Anh và hai pence"
+ * reader.read('12.02', 'GBP', { lang: 'en' }); // "Twelve pounds and two pence"
  */
 export function createMoneyReader(options: MoneyReaderOptions = {}): MoneyReader {
+  const defaultLang: Lang = options.lang === 'en' ? 'en' : 'vi';
   const source = options.currencies ?? DEFAULT_CURRENCIES;
   if (!Array.isArray(source)) {
-    throw new MoneyReaderError('INVALID_CONFIG', 'currencies phải là một mảng');
+    throw new MoneyReaderError('INVALID_CONFIG', messages.currenciesNotArray(defaultLang));
   }
 
   // Chỉ bản ghi Active mới có hiệu lực; mã trùng thì lấy bản ghi Active đầu tiên.
@@ -79,17 +106,22 @@ export function createMoneyReader(options: MoneyReaderOptions = {}): MoneyReader
   const getCurrency = (currencyCode: string) => registry.get(normalizeCurrencyCode(currencyCode));
 
   const read = (amount: AmountInput, currencyCode: string, readOptions: ReadOptions = {}): string => {
+    const lang: Lang = readOptions.lang ?? defaultLang;
+    if (lang !== 'vi' && lang !== 'en') {
+      throw new MoneyReaderError('INVALID_CONFIG', messages.invalidLang(String(lang)));
+    }
+
     // Bước 1-2: chuẩn hóa & tra cứu tiền tệ Active.
     const code = normalizeCurrencyCode(currencyCode);
     const currency = registry.get(code);
     if (!currency) {
       throw new MoneyReaderError(
         'CURRENCY_NOT_FOUND',
-        `Không tìm thấy cấu hình tiền tệ đang hoạt động cho mã "${code}"`,
+        messages.currencyNotFound(lang, code),
         { currency_code: code },
       );
     }
-    validateCurrency(currency);
+    validateCurrency(currency, lang);
     const vndStyle = code === VND;
 
     // Bước 3: tách phần nguyên / thập phân.
@@ -104,7 +136,7 @@ export function createMoneyReader(options: MoneyReaderOptions = {}): MoneyReader
         if (fraction !== '') {
           throw new MoneyReaderError(
             'DECIMAL_REJECTED',
-            `Tiền tệ ${code} không chấp nhận phần thập phân`,
+            messages.decimalRejected(lang, code),
             { currency_code: code, amount: String(amount) },
           );
         }
@@ -114,7 +146,7 @@ export function createMoneyReader(options: MoneyReaderOptions = {}): MoneyReader
         if (fraction.length > scale) {
           throw new MoneyReaderError(
             'DECIMAL_SCALE_EXCEEDED',
-            `Phần thập phân vượt quá ${scale} chữ số cho phép của ${code} (không tự động làm tròn)`,
+            messages.decimalScaleExceeded(lang, code, scale),
             { currency_code: code, amount: String(amount), decimal_scale: scale },
           );
         }
@@ -126,12 +158,33 @@ export function createMoneyReader(options: MoneyReaderOptions = {}): MoneyReader
     }
 
     // Bước 4 & 6: đọc phần nguyên + tên đơn vị chính.
-    const parts: string[] = [readDigitsVi(integer, { vndStyle }), currency.currency_name.trim()];
+    let integerText: string;
+    if (lang === 'en') {
+      try {
+        integerText = readDigitsEn(integer);
+      } catch (err) {
+        if (err instanceof RangeError) {
+          throw new MoneyReaderError(
+            'INVALID_AMOUNT',
+            messages.invalidAmount(lang, messages.reasonTooLarge(lang, EN_MAX_DIGITS)),
+            { input: String(amount), integer },
+          );
+        }
+        throw err;
+      }
+    } else {
+      integerText = readDigitsVi(integer, { vndStyle });
+    }
+
+    const mainUnit = resolveMainUnitName(currency, integer, lang);
+    const parts: string[] = [integerText, mainUnit];
 
     // Bước 7: ghép phần lẻ.
     if (minorDigits !== null && minorDigits !== '0') {
-      const unit = minorDigits === '1' ? currency.minor_unit_singular : currency.minor_unit_plural;
-      parts.push('và', readDigitsVi(minorDigits, { vndStyle }), String(unit).trim());
+      const minorUnit = resolveMinorUnitName(currency, minorDigits, lang);
+      const minorText = lang === 'en' ? readDigitsEn(minorDigits) : readDigitsVi(minorDigits, { vndStyle });
+      const connector = lang === 'en' ? 'and' : 'và';
+      parts.push(connector, minorText, minorUnit);
     }
 
     // Bước 8: viết hoa chữ cái đầu.
@@ -161,6 +214,7 @@ const getDefaultReader = () => (defaultReader ??= createMoneyReader());
 /**
  * Đọc số tiền thành chữ với danh mục mặc định (`DEFAULT_CURRENCIES`).
  * @example readMoney(1005001, 'VND') // "Một triệu không trăm linh năm nghìn không trăm lẻ một đồng"
+ * @example readMoney(1005001, 'VND', { lang: 'en' }) // "One million five thousand one dong"
  */
 export function readMoney(amount: AmountInput, currencyCode: string, options?: ReadOptions): string {
   return getDefaultReader().read(amount, currencyCode, options);

@@ -197,14 +197,19 @@ const reader = createMoneyReader({ currencies: apiCurrencies });`,
         file: 'main.ts',
         code: `import { readMoney, safeReadMoney } from 'n2cur';
 
-// Đọc nhanh với cấu hình mặc định (VND, USD, EUR, GBP, JPY, SGD)
+// Đọc Tiếng Việt (mặc định)
 console.log(readMoney(24, 'VND'));        // "Hai mươi tư đồng"
 console.log(readMoney('12.02', 'GBP'));   // "Mười hai bảng Anh và hai pence"
 
+// Đọc Tiếng Anh (English reading support)
+console.log(readMoney(105, 'USD', { lang: 'en' }));     // "One hundred five US dollars"
+console.log(readMoney('12.02', 'GBP', { lang: 'en' })); // "Twelve pounds and two pence"
+
 // Safe read không ném exception khi nhập sai
-const res = safeReadMoney(100, 'USD');
+const res = safeReadMoney(100, 'USD', { lang: 'en' });
 if (res.ok) console.log(res.text);`,
       },
+
       {
         title: 'Bước 3: Định dạng thập phân kiểu Việt Nam (dấu phẩy ",")',
         file: 'custom-sep.ts',

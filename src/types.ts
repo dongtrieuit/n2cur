@@ -6,6 +6,9 @@
  */
 export type DecimalHandling = 'READ' | 'IGNORE' | 'REJECT';
 
+/** Ngôn ngữ đầu ra: `'vi'` (mặc định) hoặc `'en'`. */
+export type Lang = 'vi' | 'en';
+
 /**
  * Bản ghi danh mục tiền tệ (Master Data).
  * Tên trường giữ nguyên dạng snake_case như danh mục để FE có thể truyền thẳng dữ liệu từ API.
@@ -27,6 +30,15 @@ export interface CurrencyConfig {
   minor_unit_plural?: string | null;
   /** Chỉ bản ghi active = true mới có hiệu lực. */
   active: boolean;
+
+  /** Tên tiếng Anh số ít của đơn vị chính (US dollar). Thiếu thì dùng mã ISO khi `lang: 'en'`. */
+  currency_name_en?: string | null;
+  /** Tên tiếng Anh số nhiều của đơn vị chính (US dollars). Thiếu thì dùng `currency_name_en`. */
+  currency_name_en_plural?: string | null;
+  /** Tên tiếng Anh đơn vị lẻ số ít (cent). Thiếu thì dùng `minor_unit_singular`. */
+  minor_unit_singular_en?: string | null;
+  /** Tên tiếng Anh đơn vị lẻ số nhiều (cents). Thiếu thì dùng `minor_unit_plural`. */
+  minor_unit_plural_en?: string | null;
 }
 
 /** Kiểu số tiền đầu vào. Ưu tiên `string`/`bigint` cho số lớn hoặc cần chính xác tuyệt đối. */
@@ -39,9 +51,13 @@ export interface ReadOptions {
    * - `','`: `"1.005.001,25"` (dấu `.` là phân cách nghìn).
    */
   decimalSeparator?: '.' | ',';
+  /** Ngôn ngữ đầu ra cho lần đọc này. Mặc định theo reader (`'vi'`). */
+  lang?: Lang;
 }
 
 export interface MoneyReaderOptions {
   /** Danh mục tiền tệ. Mặc định: `DEFAULT_CURRENCIES`. */
   currencies?: readonly CurrencyConfig[];
+  /** Ngôn ngữ mặc định của reader. Mặc định `'vi'`. */
+  lang?: Lang;
 }
